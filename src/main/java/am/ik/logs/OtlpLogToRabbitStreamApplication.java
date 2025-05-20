@@ -1,13 +1,13 @@
-package lol.maki.logsink;
+package am.ik.logs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LogSinkAppApplication {
+public class OtlpLogToRabbitStreamApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LogSinkAppApplication.class, args);
+		SpringApplication.run(OtlpLogToRabbitStreamApplication.class, args);
 	}
 
 }

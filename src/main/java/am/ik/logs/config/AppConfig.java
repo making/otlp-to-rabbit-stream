@@ -1,4 +1,4 @@
-package lol.maki.logsink.config;
+package am.ik.logs.config;
 
 import io.micrometer.core.instrument.config.MeterFilter;
 

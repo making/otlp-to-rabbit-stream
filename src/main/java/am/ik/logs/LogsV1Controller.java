@@ -1,4 +1,4 @@
-package lol.maki.logsink.logs;
+package am.ik.logs;
 
 import io.opentelemetry.proto.common.v1.AnyValue;
 import io.opentelemetry.proto.common.v1.InstrumentationScope;

@@ -1,4 +1,4 @@
-package lol.maki.logsink;
+package am.ik.logs;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
