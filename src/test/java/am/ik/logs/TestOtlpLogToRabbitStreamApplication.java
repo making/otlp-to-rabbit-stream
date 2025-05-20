@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 public class TestOtlpLogToRabbitStreamApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.from(OtlpLogToRabbitStreamApplication::main).with(TestOtlpLogToRabbitStreamApplication.class).run(args);
+		SpringApplication.from(OtlpLogToRabbitStreamApplication::main)
+			.with(TestOtlpLogToRabbitStreamApplication.class)
+			.run(args);
 	}
 
 }
