@@ -8,8 +8,8 @@ public class TestOtlpLogToRabbitStreamApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.from(OtlpLogToRabbitStreamApplication::main)
-			.with(TestOtlpLogToRabbitStreamApplication.class)
-			.run(args);
+			.with(TestcontainersConfiguration.class)
+			.run("--rabbitmq.management.exposed-port=35672");
 	}
 
 }

@@ -1,14 +1,12 @@
 package am.ik.logs;
 
+import com.google.protobuf.util.JsonFormat;
+import io.opentelemetry.proto.logs.v1.LogsData;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
-
-import com.google.protobuf.util.JsonFormat;
-import io.opentelemetry.proto.logs.v1.LogsData;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,7 +30,7 @@ class LogsV1ControllerTest extends IntegrationTestBase {
 			.body(builder.build())
 			.retrieve()
 			.toBodilessEntity();
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 	}
 
 	@Test
@@ -48,7 +46,7 @@ class LogsV1ControllerTest extends IntegrationTestBase {
 			.body(compress(builder.build().toByteArray()))
 			.retrieve()
 			.toBodilessEntity();
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 	}
 
 	@Test
@@ -61,7 +59,7 @@ class LogsV1ControllerTest extends IntegrationTestBase {
 			.body(json)
 			.retrieve()
 			.toBodilessEntity();
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 	}
 
 	static byte[] compress(byte[] body) throws IOException {

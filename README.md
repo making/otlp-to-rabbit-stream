@@ -8,7 +8,7 @@ a tiny OTLP log receiver
 
 ## Send a example record
 
-```
+```bash
 cat src/test/resources/logs.json | curl -H "Content-Type: application/json" -s http://localhost:4318/v1/logs --data-binary @- -v
 ```
 

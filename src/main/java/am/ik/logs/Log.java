@@ -2,7 +2,6 @@ package am.ik.logs;
 
 import java.time.Instant;
 import java.util.Map;
-
 import org.jilt.Builder;
 
 @Builder

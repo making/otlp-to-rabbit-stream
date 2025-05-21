@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.BasicJsonTester;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestClient;
 import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "logging.structured.format.console=" })
+@Import({ TestcontainersConfiguration.class })
 public abstract class IntegrationTestBase {
 
 	@Autowired
