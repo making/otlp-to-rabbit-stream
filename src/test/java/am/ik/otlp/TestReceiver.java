@@ -7,7 +7,7 @@ public class TestReceiver {
 
 	private static final AtomicReference<byte[]> received = new AtomicReference<>(null);
 
-	@RabbitListener(queues = "${spring.rabbitmq.stream.name}")
+	@RabbitListener(queues = { "log-sink" })
 	void listen(byte[] data) {
 		received.set(data);
 	}

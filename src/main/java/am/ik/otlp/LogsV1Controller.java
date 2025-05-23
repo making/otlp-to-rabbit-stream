@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.rabbit.stream.producer.RabbitStreamTemplate;
@@ -28,7 +29,8 @@ public class LogsV1Controller {
 
 	private final JsonFormat.Printer printer = JsonFormat.printer().omittingInsignificantWhitespace();
 
-	public LogsV1Controller(RabbitStreamTemplate rabbitStreamTemplate, ObjectMapper objectMapper, OtlpSinkProps props) {
+	public LogsV1Controller(@Qualifier("rabbitStreamTemplateForLogs") RabbitStreamTemplate rabbitStreamTemplate,
+			ObjectMapper objectMapper, OtlpSinkProps props) {
 		this.rabbitStreamTemplate = rabbitStreamTemplate;
 		this.objectMapper = objectMapper;
 		this.props = props;

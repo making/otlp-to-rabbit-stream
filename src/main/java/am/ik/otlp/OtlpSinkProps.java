@@ -18,6 +18,9 @@ public final class OtlpSinkProps {
 	@NestedConfigurationProperty
 	private final Producer producer = new Producer();
 
+	@NestedConfigurationProperty
+	private final Logs logs = new Logs();
+
 	public Stream getStream() {
 		return stream;
 	}
@@ -32,6 +35,24 @@ public final class OtlpSinkProps {
 
 	public void setFormat(OtlpSinkFormat format) {
 		this.format = format;
+	}
+
+	public Logs getLogs() {
+		return logs;
+	}
+
+	public static final class Logs {
+
+		private String streamName = "log-sink";
+
+		public String getStreamName() {
+			return streamName;
+		}
+
+		public void setStreamName(String streamName) {
+			this.streamName = streamName;
+		}
+
 	}
 
 	public static final class Stream {
