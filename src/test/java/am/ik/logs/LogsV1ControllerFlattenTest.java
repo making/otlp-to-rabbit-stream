@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "logging.structured.format.console=" })
 @Import({ TestcontainersConfiguration.class })
-class LogsV1ControllerTest {
+class LogsV1ControllerFlattenTest {
 
 	RestClient restClient;
 

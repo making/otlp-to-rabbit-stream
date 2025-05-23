@@ -1,9 +1,11 @@
 package am.ik.logs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.util.JsonFormat;
 import io.opentelemetry.proto.logs.v1.LogsData;
+import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -24,6 +26,8 @@ public class LogsV1Controller {
 
 	private final LogSinkProps props;
 
+	private final JsonFormat.Printer printer = JsonFormat.printer().omittingInsignificantWhitespace();
+
 	public LogsV1Controller(RabbitStreamTemplate rabbitStreamTemplate, ObjectMapper objectMapper, LogSinkProps props) {
 		this.rabbitStreamTemplate = rabbitStreamTemplate;
 		this.objectMapper = objectMapper;
@@ -35,18 +39,20 @@ public class LogsV1Controller {
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public CompletableFuture<Void> logs(@RequestBody LogsData logs) {
 		List<CompletableFuture<?>> sent = new ArrayList<>();
-		switch (props.getMode()) {
-			case FLATTEN -> {
-				for (Log log : Log.flatten(logs)) {
-					try {
+		try {
+			switch (props.getFormat()) {
+				case FLATTEN -> {
+					for (Log log : Log.flatten(logs)) {
 						sent.add(this.rabbitStreamTemplate.convertAndSend(this.objectMapper.writeValueAsBytes(log)));
 					}
-					catch (JsonProcessingException e) {
-						throw new UncheckedIOException(e);
-					}
 				}
+				case OTLP -> sent.add(this.rabbitStreamTemplate.convertAndSend(logs.toByteArray()));
+				case OTLP_JSON -> sent.add(
+						this.rabbitStreamTemplate.convertAndSend(printer.print(logs).getBytes(StandardCharsets.UTF_8)));
 			}
-			case PROXY -> sent.add(this.rabbitStreamTemplate.convertAndSend(logs.toByteArray()));
+		}
+		catch (IOException e) {
+			throw new UncheckedIOException(e);
 		}
 		return CompletableFuture.allOf(sent.toArray(new CompletableFuture[0]));
 	}

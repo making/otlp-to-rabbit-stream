@@ -24,10 +24,10 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=", "log-sink.mode=proxy",
+		properties = { "logging.structured.format.console=", "log-sink.format=otlp",
 				"log-sink.producer.compression=zstd" })
 @Import({ TestcontainersConfiguration.class })
-class LogsV1ControllerProxyModeTest {
+class LogsV1ControllerOtlpTest {
 
 	RestClient restClient;
 

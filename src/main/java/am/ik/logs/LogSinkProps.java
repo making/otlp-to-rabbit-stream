@@ -10,7 +10,7 @@ import org.springframework.util.unit.DataSize;
 @ConfigurationProperties(prefix = "log-sink")
 public final class LogSinkProps {
 
-	private LogSinkMode mode = LogSinkMode.FLATTEN;
+	private LogSinkFormat format = LogSinkFormat.FLATTEN;
 
 	@NestedConfigurationProperty
 	private final Stream stream = new Stream();
@@ -26,12 +26,12 @@ public final class LogSinkProps {
 		return producer;
 	}
 
-	public LogSinkMode getMode() {
-		return mode;
+	public LogSinkFormat getFormat() {
+		return format;
 	}
 
-	public void setMode(LogSinkMode mode) {
-		this.mode = mode;
+	public void setFormat(LogSinkFormat format) {
+		this.format = format;
 	}
 
 	public static final class Stream {
