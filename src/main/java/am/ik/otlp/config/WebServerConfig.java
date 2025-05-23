@@ -1,4 +1,4 @@
-package am.ik.logs.config;
+package am.ik.otlp.config;
 
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 

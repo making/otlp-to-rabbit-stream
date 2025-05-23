@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import com.rabbitmq.stream.compression.Compression;
 import java.time.Duration;

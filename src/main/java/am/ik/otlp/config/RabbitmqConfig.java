@@ -1,6 +1,6 @@
-package am.ik.logs.config;
+package am.ik.otlp.config;
 
-import am.ik.logs.LogSinkProps;
+import am.ik.otlp.LogSinkProps;
 import com.rabbitmq.stream.ByteCapacity;
 import com.rabbitmq.stream.Environment;
 import com.rabbitmq.stream.StreamCreator;
@@ -13,11 +13,11 @@ import org.springframework.rabbit.stream.support.StreamAdmin;
 import org.springframework.util.unit.DataSize;
 
 @Configuration(proxyBeanMethods = false)
-public class AmqpConfig {
+public class RabbitmqConfig {
 
 	private final LogSinkProps props;
 
-	public AmqpConfig(LogSinkProps props) {
+	public RabbitmqConfig(LogSinkProps props) {
 		this.props = props;
 	}
 

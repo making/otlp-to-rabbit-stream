@@ -9,11 +9,11 @@
     <version>3.5.0</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
-  <groupId>am.ik.logs</groupId>
-  <artifactId>otlp-log-to-rabbit-stream</artifactId>
+  <groupId>am.ik.otlp</groupId>
+  <artifactId>otlp-to-rabbit-stream</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>otlp-log-to-rabbit-stream</name>
-  <description>otlp-log-to-rabbit-stream</description>
+  <name>otlp-to-rabbit-stream</name>
+  <description>otlp-to-rabbit-stream</description>
   <properties>
     <java.version>21</java.version>
     <protoc.version>4.31.0</protoc.version>
@@ -123,7 +123,7 @@
           <compilerArgs>
             <arg>-XDcompilePolicy=simple</arg>
             <arg>-Xplugin:ErrorProne -Xep:NullAway:ERROR
-              -XepOpt:NullAway:AnnotatedPackages=am.ik.logs
+              -XepOpt:NullAway:AnnotatedPackages=am.ik.otlp
               -XepExcludedPaths:(.*/test/java/.*|.*/target/generated-sources/.*)
             </arg>
           </compilerArgs>

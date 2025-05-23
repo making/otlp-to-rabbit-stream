@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

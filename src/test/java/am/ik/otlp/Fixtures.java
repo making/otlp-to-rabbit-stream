@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import com.google.protobuf.util.JsonFormat;
 import io.opentelemetry.proto.logs.v1.LogsData;

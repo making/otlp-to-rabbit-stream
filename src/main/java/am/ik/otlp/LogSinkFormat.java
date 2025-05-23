@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 public enum LogSinkFormat {
 

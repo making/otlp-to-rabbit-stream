@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.proto.logs.v1.LogsData;
@@ -24,10 +24,9 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=", "log-sink.format=otlp",
-				"log-sink.producer.compression=zstd" })
+		properties = { "logging.structured.format.console=" })
 @Import({ TestcontainersConfiguration.class })
-class LogsV1ControllerOtlpTest {
+class LogsV1ControllerFlattenTest {
 
 	RestClient restClient;
 
@@ -62,7 +61,8 @@ class LogsV1ControllerOtlpTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
+		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
+			.isEqualTo(Log.flatten(logsData).getFirst().toString());
 	}
 
 	@Test
@@ -76,7 +76,8 @@ class LogsV1ControllerOtlpTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
+		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
+			.isEqualTo(Log.flatten(logsData).getFirst().toString());
 	}
 
 	@Test
@@ -89,7 +90,8 @@ class LogsV1ControllerOtlpTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
+		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
+			.isEqualTo(Log.flatten(logsData).getFirst().toString());
 	}
 
 	static byte[] compress(byte[] body) throws IOException {

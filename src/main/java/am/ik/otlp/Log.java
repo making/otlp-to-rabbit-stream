@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import io.opentelemetry.proto.common.v1.AnyValue;
 import io.opentelemetry.proto.common.v1.InstrumentationScope;

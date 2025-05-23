@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.proto.logs.v1.LogsData;
@@ -24,10 +24,10 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=", "log-sink.format=otlp_json",
+		properties = { "logging.structured.format.console=", "log-sink.format=otlp",
 				"log-sink.producer.compression=zstd" })
 @Import({ TestcontainersConfiguration.class })
-class LogsV1ControllerOtlpJsonTest {
+class LogsV1ControllerOtlpTest {
 
 	RestClient restClient;
 
@@ -62,7 +62,7 @@ class LogsV1ControllerOtlpJsonTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(Fixtures.fromJson(new String(TestReceiver.getReceived()))).isEqualTo(logsData);
+		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ class LogsV1ControllerOtlpJsonTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(Fixtures.fromJson(new String(TestReceiver.getReceived()))).isEqualTo(logsData);
+		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
 	}
 
 	@Test
@@ -89,7 +89,7 @@ class LogsV1ControllerOtlpJsonTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(Fixtures.fromJson(new String(TestReceiver.getReceived()))).isEqualTo(logsData);
+		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
 	}
 
 	static byte[] compress(byte[] body) throws IOException {

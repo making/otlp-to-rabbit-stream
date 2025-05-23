@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.util.JsonFormat;

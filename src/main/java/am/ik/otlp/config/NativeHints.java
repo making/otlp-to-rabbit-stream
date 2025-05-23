@@ -1,6 +1,6 @@
-package am.ik.logs.config;
+package am.ik.otlp.config;
 
-import am.ik.logs.Log;
+import am.ik.otlp.Log;
 import com.google.protobuf.DescriptorProtos;
 import com.rabbitmq.stream.Constants;
 import com.rabbitmq.stream.impl.Client;

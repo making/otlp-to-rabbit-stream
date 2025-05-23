@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.proto.logs.v1.LogsData;
@@ -24,9 +24,10 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=" })
+		properties = { "logging.structured.format.console=", "log-sink.format=otlp_json",
+				"log-sink.producer.compression=zstd" })
 @Import({ TestcontainersConfiguration.class })
-class LogsV1ControllerFlattenTest {
+class LogsV1ControllerOtlpJsonTest {
 
 	RestClient restClient;
 
@@ -61,8 +62,7 @@ class LogsV1ControllerFlattenTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).getFirst().toString());
+		assertThat(Fixtures.fromJson(new String(TestReceiver.getReceived()))).isEqualTo(logsData);
 	}
 
 	@Test
@@ -76,8 +76,7 @@ class LogsV1ControllerFlattenTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).getFirst().toString());
+		assertThat(Fixtures.fromJson(new String(TestReceiver.getReceived()))).isEqualTo(logsData);
 	}
 
 	@Test
@@ -90,8 +89,7 @@ class LogsV1ControllerFlattenTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).getFirst().toString());
+		assertThat(Fixtures.fromJson(new String(TestReceiver.getReceived()))).isEqualTo(logsData);
 	}
 
 	static byte[] compress(byte[] body) throws IOException {

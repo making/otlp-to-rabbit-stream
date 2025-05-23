@@ -1,4 +1,4 @@
-package am.ik.logs;
+package am.ik.otlp;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

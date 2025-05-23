@@ -1,4 +1,4 @@
-package am.ik.logs.config;
+package am.ik.otlp.config;
 
 import io.micrometer.core.instrument.config.MeterFilter;
 
