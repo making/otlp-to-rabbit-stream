@@ -24,8 +24,8 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=", "log-sink.format=otlp_json",
-				"log-sink.producer.compression=zstd" })
+		properties = { "logging.structured.format.console=", "otlp-sink.format=otlp_json",
+				"otlp-sink.producer.compression=zstd" })
 @Import({ TestcontainersConfiguration.class })
 class LogsV1ControllerOtlpJsonTest {
 

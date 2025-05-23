@@ -24,11 +24,11 @@ public class LogsV1Controller {
 
 	private final ObjectMapper objectMapper;
 
-	private final LogSinkProps props;
+	private final OtlpSinkProps props;
 
 	private final JsonFormat.Printer printer = JsonFormat.printer().omittingInsignificantWhitespace();
 
-	public LogsV1Controller(RabbitStreamTemplate rabbitStreamTemplate, ObjectMapper objectMapper, LogSinkProps props) {
+	public LogsV1Controller(RabbitStreamTemplate rabbitStreamTemplate, ObjectMapper objectMapper, OtlpSinkProps props) {
 		this.rabbitStreamTemplate = rabbitStreamTemplate;
 		this.objectMapper = objectMapper;
 		this.props = props;

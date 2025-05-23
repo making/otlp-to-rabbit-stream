@@ -7,10 +7,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.lang.Nullable;
 import org.springframework.util.unit.DataSize;
 
-@ConfigurationProperties(prefix = "log-sink")
-public final class LogSinkProps {
+@ConfigurationProperties(prefix = "otlp-sink")
+public final class OtlpSinkProps {
 
-	private LogSinkFormat format = LogSinkFormat.FLATTEN;
+	private OtlpSinkFormat format = OtlpSinkFormat.FLATTEN;
 
 	@NestedConfigurationProperty
 	private final Stream stream = new Stream();
@@ -26,11 +26,11 @@ public final class LogSinkProps {
 		return producer;
 	}
 
-	public LogSinkFormat getFormat() {
+	public OtlpSinkFormat getFormat() {
 		return format;
 	}
 
-	public void setFormat(LogSinkFormat format) {
+	public void setFormat(OtlpSinkFormat format) {
 		this.format = format;
 	}
 

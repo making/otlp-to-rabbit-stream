@@ -1,6 +1,6 @@
 package am.ik.otlp.config;
 
-import am.ik.otlp.LogSinkProps;
+import am.ik.otlp.OtlpSinkProps;
 import com.rabbitmq.stream.ByteCapacity;
 import com.rabbitmq.stream.Environment;
 import com.rabbitmq.stream.StreamCreator;
@@ -15,9 +15,9 @@ import org.springframework.util.unit.DataSize;
 @Configuration(proxyBeanMethods = false)
 public class RabbitmqConfig {
 
-	private final LogSinkProps props;
+	private final OtlpSinkProps props;
 
-	public RabbitmqConfig(LogSinkProps props) {
+	public RabbitmqConfig(OtlpSinkProps props) {
 		this.props = props;
 	}
 
@@ -26,7 +26,7 @@ public class RabbitmqConfig {
 		return new StreamAdmin(streamEnvironment, sc -> {
 			PropertyMapper mapper = PropertyMapper.get();
 			StreamCreator streamCreator = sc.stream(streamName);
-			LogSinkProps.Stream streamProps = props.getStream();
+			OtlpSinkProps.Stream streamProps = props.getStream();
 			mapper.from(streamProps.getMaxSegmentSize())
 				.whenNonNull()
 				.as(DataSize::toBytes)
@@ -46,7 +46,7 @@ public class RabbitmqConfig {
 	ProducerCustomizer producerCustomizer() {
 		return (beanName, builder) -> {
 			PropertyMapper mapper = PropertyMapper.get();
-			LogSinkProps.Producer producerProps = props.getProducer();
+			OtlpSinkProps.Producer producerProps = props.getProducer();
 			mapper.from(producerProps.getCompression()).whenNonNull().to(builder::compression);
 			mapper.from(producerProps.getBatchSize()).when(x -> x > 0).to(builder::batchSize);
 			mapper.from(producerProps.getSubEntrySize()).when(x -> x > 0).to(builder::subEntrySize);
