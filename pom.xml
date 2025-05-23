@@ -72,14 +72,6 @@
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-tracing-bridge-otel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-exporter-otlp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
       <scope>runtime</scope>
     </dependency>
@@ -193,9 +185,6 @@
             <id>process-aot</id>
             <configuration>
               <systemPropertyVariables>
-                <management.otlp.tracing.endpoint>
-                  http://otel-collector.opentelemetry.svc.cluster.local:4318/v1/traces
-                </management.otlp.tracing.endpoint>
               </systemPropertyVariables>
             </configuration>
           </execution>
