@@ -62,7 +62,7 @@ class LogsV1ControllerTest {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.received.get()).isNotNull());
 		assertThat(objectMapper.readValue(TestReceiver.received.get(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).get(0).toString());
+			.isEqualTo(Log.flatten(logsData).getFirst().toString());
 	}
 
 	@Test
@@ -77,7 +77,7 @@ class LogsV1ControllerTest {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.received.get()).isNotNull());
 		assertThat(objectMapper.readValue(TestReceiver.received.get(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).get(0).toString());
+			.isEqualTo(Log.flatten(logsData).getFirst().toString());
 	}
 
 	@Test
@@ -91,7 +91,7 @@ class LogsV1ControllerTest {
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.received.get()).isNotNull());
 		assertThat(objectMapper.readValue(TestReceiver.received.get(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).get(0).toString());
+			.isEqualTo(Log.flatten(logsData).getFirst().toString());
 	}
 
 	static byte[] compress(byte[] body) throws IOException {
