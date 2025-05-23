@@ -1,58 +1,87 @@
 package am.ik.logs;
 
-import com.google.protobuf.util.JsonFormat;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.proto.logs.v1.LogsData;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestClient;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
+import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LogsV1ControllerTest extends IntegrationTestBase {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = { "logging.structured.format.console=" })
+@Import({ TestcontainersConfiguration.class })
+class LogsV1ControllerTest {
+
+	RestClient restClient;
+
+	String json = Fixtures.json();
+
+	LogsData logsData = Fixtures.logsData();
+
+	@Autowired
+	ObjectMapper objectMapper;
+
+	@BeforeEach
+	public void init(@Autowired RestClient.Builder restClientBuilder,
+			@Autowired LogbookClientHttpRequestInterceptor logbookClientHttpRequestInterceptor,
+			@LocalServerPort int port) {
+		if (this.restClient == null) {
+			this.restClient = restClientBuilder.baseUrl("http://localhost:" + port)
+				.defaultStatusHandler(__ -> true, (req, res) -> {
+				})
+				.requestInterceptor(logbookClientHttpRequestInterceptor)
+				.build();
+		}
+		TestReceiver.received.set(null);
+	}
 
 	@Test
 	void ingestProtobuf() throws Exception {
-		String json = StreamUtils.copyToString(new ClassPathResource("logs.json").getInputStream(),
-				StandardCharsets.UTF_8);
-		LogsData.Builder builder = LogsData.newBuilder();
-		JsonFormat.parser().merge(json, builder);
 		ResponseEntity<Void> response = this.restClient.post()
 			.uri("/v1/logs")
 			.contentType(MediaType.APPLICATION_PROTOBUF)
-			.body(builder.build())
+			.body(logsData)
 			.retrieve()
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.received.get()).isNotNull());
+		assertThat(objectMapper.readValue(TestReceiver.received.get(), Log.class).toString())
+			.isEqualTo(Log.flatten(logsData).get(0).toString());
 	}
 
 	@Test
 	void ingestProtobufGzip() throws Exception {
-		String json = StreamUtils.copyToString(new ClassPathResource("logs.json").getInputStream(),
-				StandardCharsets.UTF_8);
-		LogsData.Builder builder = LogsData.newBuilder();
-		JsonFormat.parser().merge(json, builder);
 		ResponseEntity<Void> response = this.restClient.post()
 			.uri("/v1/logs")
 			.contentType(MediaType.APPLICATION_PROTOBUF)
 			.header(HttpHeaders.CONTENT_ENCODING, "gzip")
-			.body(compress(builder.build().toByteArray()))
+			.body(compress(logsData.toByteArray()))
 			.retrieve()
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.received.get()).isNotNull());
+		assertThat(objectMapper.readValue(TestReceiver.received.get(), Log.class).toString())
+			.isEqualTo(Log.flatten(logsData).get(0).toString());
 	}
 
 	@Test
 	void ingestJson() throws Exception {
-		String json = StreamUtils.copyToString(new ClassPathResource("logs.json").getInputStream(),
-				StandardCharsets.UTF_8);
 		ResponseEntity<Void> response = this.restClient.post()
 			.uri("/v1/logs")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -60,6 +89,9 @@ class LogsV1ControllerTest extends IntegrationTestBase {
 			.retrieve()
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.received.get()).isNotNull());
+		assertThat(objectMapper.readValue(TestReceiver.received.get(), Log.class).toString())
+			.isEqualTo(Log.flatten(logsData).get(0).toString());
 	}
 
 	static byte[] compress(byte[] body) throws IOException {
@@ -68,6 +100,16 @@ class LogsV1ControllerTest extends IntegrationTestBase {
 			gzipOutputStream.write(body);
 		}
 		return baos.toByteArray();
+	}
+
+	@TestConfiguration(proxyBeanMethods = false)
+	static class TestConfig {
+
+		@Bean
+		TestReceiver testReceiver() {
+			return new TestReceiver();
+		}
+
 	}
 
 }
