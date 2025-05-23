@@ -26,7 +26,7 @@ public class AmqpConfig {
 		return new StreamAdmin(streamEnvironment, sc -> {
 			PropertyMapper mapper = PropertyMapper.get();
 			StreamCreator streamCreator = sc.stream(streamName);
-			LogSinkProps.Stream streamProps = props.stream();
+			LogSinkProps.Stream streamProps = props.getStream();
 			mapper.from(streamProps.getMaxSegmentSize())
 				.whenNonNull()
 				.as(DataSize::toBytes)
@@ -46,7 +46,7 @@ public class AmqpConfig {
 	ProducerCustomizer producerCustomizer() {
 		return (beanName, builder) -> {
 			PropertyMapper mapper = PropertyMapper.get();
-			LogSinkProps.Producer producerProps = props.producer();
+			LogSinkProps.Producer producerProps = props.getProducer();
 			mapper.from(producerProps.getCompression()).whenNonNull().to(builder::compression);
 			mapper.from(producerProps.getBatchSize()).when(x -> x > 0).to(builder::batchSize);
 			mapper.from(producerProps.getSubEntrySize()).when(x -> x > 0).to(builder::subEntrySize);

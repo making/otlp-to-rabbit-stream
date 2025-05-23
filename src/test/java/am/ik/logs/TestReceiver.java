@@ -5,11 +5,19 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 public class TestReceiver {
 
-	static AtomicReference<String> received = new AtomicReference<>(null);
+	private static final AtomicReference<byte[]> received = new AtomicReference<>(null);
 
 	@RabbitListener(queues = "${spring.rabbitmq.stream.name}")
-	void listen(String data) {
+	void listen(byte[] data) {
 		received.set(data);
+	}
+
+	public static byte[] getReceived() {
+		return received.get();
+	}
+
+	public static void clearReceived() {
+		received.set(null);
 	}
 
 }

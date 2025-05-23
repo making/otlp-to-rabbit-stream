@@ -24,9 +24,10 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=" })
+		properties = { "logging.structured.format.console=", "log-sink.mode=proxy",
+				"log-sink.producer.compression=zstd" })
 @Import({ TestcontainersConfiguration.class })
-class LogsV1ControllerTest {
+class LogsV1ControllerProxyModeTest {
 
 	RestClient restClient;
 
@@ -61,8 +62,7 @@ class LogsV1ControllerTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).getFirst().toString());
+		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
 	}
 
 	@Test
@@ -76,8 +76,7 @@ class LogsV1ControllerTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).getFirst().toString());
+		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
 	}
 
 	@Test
@@ -90,8 +89,7 @@ class LogsV1ControllerTest {
 			.toBodilessEntity();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 		Awaitility.await().untilAsserted(() -> assertThat(TestReceiver.getReceived()).isNotNull());
-		assertThat(objectMapper.readValue(TestReceiver.getReceived(), Log.class).toString())
-			.isEqualTo(Log.flatten(logsData).getFirst().toString());
+		assertThat(LogsData.parseFrom(TestReceiver.getReceived())).isEqualTo(logsData);
 	}
 
 	static byte[] compress(byte[] body) throws IOException {

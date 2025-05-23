@@ -22,9 +22,12 @@ public class LogsV1Controller {
 
 	private final ObjectMapper objectMapper;
 
-	public LogsV1Controller(RabbitStreamTemplate rabbitStreamTemplate, ObjectMapper objectMapper) {
+	private final LogSinkProps props;
+
+	public LogsV1Controller(RabbitStreamTemplate rabbitStreamTemplate, ObjectMapper objectMapper, LogSinkProps props) {
 		this.rabbitStreamTemplate = rabbitStreamTemplate;
 		this.objectMapper = objectMapper;
+		this.props = props;
 	}
 
 	@PostMapping(path = "/v1/logs",
@@ -32,13 +35,18 @@ public class LogsV1Controller {
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public CompletableFuture<Void> logs(@RequestBody LogsData logs) {
 		List<CompletableFuture<?>> sent = new ArrayList<>();
-		for (Log log : Log.flatten(logs)) {
-			try {
-				sent.add(this.rabbitStreamTemplate.convertAndSend(this.objectMapper.writeValueAsBytes(log)));
+		switch (props.getMode()) {
+			case FLATTEN -> {
+				for (Log log : Log.flatten(logs)) {
+					try {
+						sent.add(this.rabbitStreamTemplate.convertAndSend(this.objectMapper.writeValueAsBytes(log)));
+					}
+					catch (JsonProcessingException e) {
+						throw new UncheckedIOException(e);
+					}
+				}
 			}
-			catch (JsonProcessingException e) {
-				throw new UncheckedIOException(e);
-			}
+			case PROXY -> sent.add(this.rabbitStreamTemplate.convertAndSend(logs.toByteArray()));
 		}
 		return CompletableFuture.allOf(sent.toArray(new CompletableFuture[0]));
 	}
