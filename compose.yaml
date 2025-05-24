@@ -1,1 +1,59 @@
 services:
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_stream advertised_host "host.docker.internal"
+    ports:
+    - "5672:5672"   # AMQP port
+    - "5671:5671"   # AMQPS port
+    - "15671:15671" # HTTPS management port
+    - "15672:15672" # HTTP management port
+    - "5552:5552"   # Stream port
+    volumes:
+    - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+    - rabbitmq_network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    # Enable required plugins after container starts
+    command: >
+      bash -c "
+        rabbitmq-server &
+        sleep 30 &&
+        rabbitmq-plugins enable rabbitmq_stream rabbitmq_stream_management &&
+        wait
+      "
+  otlp-to-rabbit-stream:
+    image: ghcr.io/making/otlp-to-rabbit-stream:native
+    pull_policy: always
+    container_name: otlp-to-rabbit-stream
+    ports:
+    - "4318:4318"   # OTLP receiver port
+    environment:
+    - SPRING_RABBITMQ_STREAM_HOST=host.docker.internal
+    - SPRING_RABBITMQ_STREAM_PORT=5552
+    - SPRING_RABBITMQ_HOST=host.docker.internal
+    - SPRING_RABBITMQ_PORT=5672
+    - SPRING_RABBITMQ_USERNAME=guest
+    - SPRING_RABBITMQ_PASSWORD=guest
+    - SERVER_PORT=4318
+    - LOG_SINK_FORMAT=otlp_json
+    - MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS=always
+    networks:
+    - rabbitmq_network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  rabbitmq_data:
+    driver: local
+networks:
+  rabbitmq_network:
+    driver: bridge
