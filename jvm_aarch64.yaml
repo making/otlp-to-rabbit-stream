@@ -1,2 +1,2 @@
-image: ghcr.io/making/otlp-to-rabbit-stream@sha256:d29fe91fc1ff825f6099c77066e948ee00c2654399c6d42810dcabda3317f8db
-git_revision: e2e7af0f6090a3a931dd2776e88c5f8cec67b177
+image: ghcr.io/making/otlp-to-rabbit-stream@sha256:35bc7b75b76d8dd735027c90b3968d9865425509f3c880a01aae0302030dd50b
+git_revision: dfc5702d435ba51feab7f1cc5d1917318e18f414
