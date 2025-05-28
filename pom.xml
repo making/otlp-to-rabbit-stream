@@ -153,6 +153,12 @@
       <plugin>
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
+        <configuration>
+          <buildArgs>
+            <!-- Ensure compatibility for kernels with page size set to 4k, 16k and 64k (e.g. Raspberry Pi 5, Asahi Linux) -->
+            <buildArg>-H:PageSize=65536</buildArg>
+          </buildArgs>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
