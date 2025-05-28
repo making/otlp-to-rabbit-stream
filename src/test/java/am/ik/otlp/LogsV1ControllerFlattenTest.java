@@ -24,7 +24,7 @@ import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "logging.structured.format.console=" })
+		properties = { "logging.structured.format.console=", "spring.security.user.password=secret" })
 @Import({ TestcontainersConfiguration.class })
 class LogsV1ControllerFlattenTest {
 
@@ -46,6 +46,7 @@ class LogsV1ControllerFlattenTest {
 				.defaultStatusHandler(__ -> true, (req, res) -> {
 				})
 				.requestInterceptor(logbookClientHttpRequestInterceptor)
+				.defaultHeaders(headers -> headers.setBasicAuth("user", "secret"))
 				.build();
 		}
 		TestReceiver.clearReceived();

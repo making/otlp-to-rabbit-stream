@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "logging.structured.format.console=", "otlp-sink.format=otlp",
-				"otlp-sink.producer.compression=zstd" })
+				"otlp-sink.producer.compression=snappy", "spring.security.user.password=secret" })
 @Import({ TestcontainersConfiguration.class })
 class LogsV1ControllerOtlpTest {
 
@@ -47,6 +47,7 @@ class LogsV1ControllerOtlpTest {
 				.defaultStatusHandler(__ -> true, (req, res) -> {
 				})
 				.requestInterceptor(logbookClientHttpRequestInterceptor)
+				.defaultHeaders(headers -> headers.setBasicAuth("user", "secret"))
 				.build();
 		}
 		TestReceiver.clearReceived();
